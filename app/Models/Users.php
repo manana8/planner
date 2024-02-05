@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class Users extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -42,4 +42,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public $timestamps = false; // По умолчанию Eloquent ожидает, что столбцы «create_at» и «update_at» будут существовать в ваших >таблицах. Если вы не хотите, чтобы эти столбцы автоматически управлялись >Eloquent, установите для свойства $timestamps вашей модели значение false.
 }
