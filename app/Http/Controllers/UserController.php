@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Users;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
@@ -35,7 +35,7 @@ class UserController extends BaseController
 
     public function create(array $data)
     {
-        return Users::create([
+        return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password'])
@@ -54,11 +54,11 @@ class UserController extends BaseController
             'password' => 'required',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('email', 'password'); //возвращает элементы с указанными ключами
 
         if (Auth::attempt($credentials)) { // проверяет данные пользователя
-//            return redirect('login')->withSuccess('Signed in');
-            echo 'done';
+            return redirect('main')->withSuccess('Signed in');
+//            echo 'done';
         }
 
         return redirect("login")->withSuccess('Login details are not valid');

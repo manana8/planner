@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
+            $table->integer('user_id')->unsigned()->nullable();
             $table->string('title');
             $table->string('text');
-            $table->integer('category_id')->unsigned()->nullable();
+            $table->integer('category_id');
             $table->dateTime('deadline');
             $table->string('status');
             $table->dateTime('data_of_create');
-            $table->dateTime('data_of_done');
+            $table->dateTime('data_of_done')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('category_id')->references('id')->on('categories');
         });
     }

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('task_comments', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id')->unsigned()->nullable();
-            $table->integer('task_id')->unsigned()->nullable();
+            $table->integer('user_id');
+            $table->integer('task_id');
             $table->string('comment');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('task_id')->references('id')->on('tasks');

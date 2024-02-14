@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('task_history', function (Blueprint $table) {
             $table->id();
             $table->dateTime('data_of_history_create');
-            $table->integer('task_id')->unsigned()->nullable();
+            $table->integer('task_id');
             $table->string('title_before');
             $table->string('text_before');
-            $table->integer('category_id_before')->unsigned()->nullable();
+            $table->integer('category_id_before');
             $table->dateTime('deadline_before');
             $table->string('status_before');
             $table->foreign('task_id')->references('id')->on('tasks');
