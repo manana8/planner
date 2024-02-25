@@ -19,4 +19,8 @@ class Category extends Model
     {
         return $this->hasMany(Task::class,'category_id', 'id');
     }
+    public function taskHistories()
+{
+    return $this->hasMany(TaskHistory::class,'category_id_before', 'id');
+}
 }

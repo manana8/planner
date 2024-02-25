@@ -6,23 +6,46 @@
             <a href="{{ url('active-tasks') }}" class="nav__item active">Active</a>
             <a href="{{ url('done-tasks') }}" class="nav__item active">Complete</a>
         </nav>
+        <form method="POST" class="doneTask" onsubmit="return false">
         <a href="{{ 'add-task' }}" >Add task</a>
         <ul class="list">
             @foreach($tasks as $task)
-                <div hidden=""> {{ $task->id }} </div>
-            <li class="item">
-                <label class="item__checkbox item__checkbox--3"><input type="checkbox"><i class="fas fa-check"></i></label> {{ $task->title }} <a href="{{ url('done-task') }}" class="item__delete"><i class="fas fa-trash-alt"></i></a></li>
-                <div style="color: #4a5568"><p> Deadline: {{ $task->deadline }} </p></div>
-                <div style="color: teal"><p> Category: {{ $task->category->category }} </p></div>
-                <div class="comment" style="color: darkgrey"><p> {{ $task->text }} </p></div>
-                @if($task->data_of_done)
-                    <div class="status" style="color: green"><p> Data of done: {{ $task->data_of_done}} </p></div>
-                @else
-                    <div class="status" style="color: red">Status: IN PROGRESS</div>
-                @endif
+                <input type="text" placeholder="task_id" name="task_id" hidden="" value="{{ $task->id }}">
+                <a href="{{ url('edit-task', $task->id) }}" >Изменить</a>
+                <a href="{{ url('history', $task->id) }}" class="delete">View the history</a>
+                <p><a href="{{ url('add-comment', $task->id) }}" >Add comments</a>
+                <a href="{{ url('comments', $task->id) }}" >View the comments</a>
+                <li class="item">
+                    <a href="{{ url('done-task', $task->id) }}" class="item__delete"><label type="checkbox" class="item__checkbox item__checkbox--3"></label></a> {{ $task->title }} <a href="{{ url('delete-task', $task->id) }}" class="delete">Delete</a> </li>
+                    <div style="color: #4a5568"><p> Deadline: {{ $task->deadline }} </p></div>
+                    <div style="color: teal"><p> Category: {{ $task->category->category }} </p></div>
+                    <div class="content" style="color: darkgrey"><p> {{ $task->text }} </p></div>
+                    @if($task->data_of_done)
+                        <div class="status" style="color: green"><p> Data of done: {{ $task->data_of_done}} </p></div>
+                    @else
+                        <div class="status" style="color: red">Status: IN PROGRESS</div>
+                    @endif
             @endforeach
         </ul>
+        </form>
     </main>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script>
+        $("document").ready(function() {
+            $('.doneTask').submit(function() {
+                $.ajax({
+                    type: "POST",
+                    url: "/done-task/{{ $task->id }}",
+                    data: $(this).serialize(),
+                    success: function() {
+                        console.log('done');
+                        $('input.add__input').val('');
+                    }
+                })
+            });
+        });
+    </script>
 
     <style>
         * {
@@ -115,9 +138,6 @@
         .add__radio input:checked + .add__circle {
             transform: scale(1);
         }
-        .add__radio:last-child {
-            margin: 0;
-        }
 
         .list {
             margin-top: 5px;
@@ -143,28 +163,19 @@
             background: none;
             padding: 0;
             margin-left: 20px;
-            cursor: pointer;
+            /*cursor: pointer;*/
             font-size: 18px;
-            position: absolute;
+            position: relative;
             right: 0;
             color: #ff5a5a;
-            transform: scale(0);
-            transition: all 0.2s ease-in-out;
+            /*transform: scale(0);*/
+            /*transition: all 0.2s ease-in-out;*/
         }
-        .item:hover .item__delete {
-            transform: scale(1);
-        }
-        .item.done {
-            opacity: 0.3;
-        }
-        .item .fa-check {
-            transition: all 0.15s ease-in-out;
-            transform: scale(0);
-        }
+
         .item__checkbox {
-            border: 2px solid #e0e0e0;
+            border: 20px solid #e0e0e0;
             color: #e0e0e0;
-            border-radius: 50%;
+            border-radius: 100%;
             height: 32px;
             /*display: block;*/
             flex: 0 0 32px;
@@ -174,8 +185,12 @@
             justify-content: center;
             align-items: center;
         }
+        .delete {
+            margin-left: auto;
 
-        .comment {
+        }
+
+        .content {
             border: 2px solid #e0e0e0;
             display: flex;
             justify-content: left;

@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_history', function (Blueprint $table) {
+        Schema::create('task_histories', function (Blueprint $table) {
             $table->id();
             $table->dateTime('data_of_history_create');
             $table->integer('task_id');
-            $table->string('title_before');
-            $table->string('text_before');
-            $table->integer('category_id_before');
-            $table->dateTime('deadline_before');
-            $table->string('status_before');
-            $table->foreign('task_id')->references('id')->on('tasks');
+            $table->string('title_before')->nullable();
+            $table->string('text_before')->nullable();
+            $table->integer('category_id_before')->nullable();
+            $table->dateTime('deadline_before')->nullable();
+            $table->string('status_before')->nullable();
+            $table->string('type');
+            $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
             $table->foreign('category_id_before')->references('id')->on('categories');
         });
     }
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_history');
+        Schema::dropIfExists('task_histories');
     }
 };

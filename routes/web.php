@@ -34,5 +34,20 @@ Route::get('/add-task', function () {
     return view('addingTask');
 });
 Route::post('/add-task', [TaskController::class, 'addTask']);
-Route::post('/delete-task', [TaskController::class, 'deleteTask']);
-Route::get('/done-task', [TaskController::class, 'doneTask']);
+Route::get('/delete-task/{id}', [TaskController::class, 'deleteTask']);
+Route::get('/done-task/{id}', [TaskController::class, 'doneTask']);
+
+Route::get('/edit-task/{id}', [TaskController::class, 'editTaskForm']);
+Route::post('/edit-task/{id}', [TaskController::class, 'editTask']);
+
+Route::get('/history/{id}', [TaskController::class, 'getHistory']);
+
+Route::get('/add-comment/{id}', [TaskController::class, 'getAddCommentForm']);
+Route::post('/add-comment/{id}', [TaskController::class, 'addComment']);
+Route::get('/comments/{id}', [TaskController::class, 'getComments']);
+Route::get('/delete-comment/{id}', [TaskController::class, 'deleteComment']);
+
+Route::get('/signout', [UserController::class, 'signOut']);
+//Auth::routes();
+//
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -1,14 +1,10 @@
 @extends('layouts')
 @section('content')
     <main class="app">
-        <nav class="nav">
-            <a href="{{ url('main') }}" class="nav__item active">All</a>
-            <a href="{{ url('active-tasks') }}" class="nav__item active">Active</a>
-            <a href="{{ url('done-tasks') }}" class="nav__item active">Complete</a>
-        </nav>
-        <form method="POST" class="addTaskForm" onsubmit="return false">
+        Editing of the task
+        <form method="POST" class="editTaskForm" onsubmit="return false" >
             @csrf
-            <div class="add">
+            <div class="edit">
                 <div class="add__priority">
                     <label class="add__radio" title="STUDY">
                         <input checked type="radio" name="category_id" value=1>
@@ -31,25 +27,28 @@
                         <span class="add__circle"></span>
                     </label>
                 </div>
-                <input placeholder="+ Add title" type="text" name="title" class="add__input">
-                <input placeholder="+ Add task" type="text" name="text" class="add__input">
-                <input type="date" name="deadline" class="add__input">
-                <input placeholder="+ Add status" type="text" name="status" class="add__input">
-                <button type="submit" class="btn">Add</button>
+                <input type="text" placeholder="task_id" name="task_id" hidden="" class="edit__input" value="{{ $task->id }}">
+                <input placeholder="+ Add title" type="text" name="title" class="edit__input" value="{{ $task->title }}">
+                <input placeholder="+ Add task" type="text" name="text" class="edit__input" value="{{ $task->text }}">
+                <input name="deadline" class="edit__input" value="{{ $task->deadline }}">
+                <input placeholder="+ Add status" type="text" name="status" class="edit__input" value="{{ $task->status }}">
+                <button type="submit" class="btn">Edit</button>
             </div>
         </form>
+        <a href="{{ url('main') }}"> BACK </a>
+    </main>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
         $("document").ready(function() {
-            $('.addTaskForm').submit(function() {
+            $('.editTaskForm').submit(function() {
                 $.ajax({
                     type: "POST",
-                    url: "/add-task",
+                    url: "/edit-task/{{ $task->id }}",
                     data: $(this).serialize(),
                     success: function() {
                         console.log('done');
-                        $('input.add__input').val('');
+                        $('input.edit__input').val('');
                     }
                 })
             });
@@ -130,12 +129,12 @@
             margin-right: 0;
         }
 
-        .add {
+        .edit {
             margin-bottom: 30px;
             padding: 0 25px;
             color: #222222;
         }
-        .add__input {
+        .edit__input {
             width: 100%;
             padding: 5px 20px;
             font-size: 18px;
@@ -145,7 +144,7 @@
             color: #222222;
             transition: all 0.2s ease-in-out;
         }
-        .add__input:focus, .add__input:active {
+        .edit_input:focus, .edit__input:active {
             border-color: #00b9a0;
             outline: 0;
         }

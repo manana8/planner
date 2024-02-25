@@ -26,4 +26,9 @@ class Task extends Model
     {
         return $this->hasOne(Category::class, 'id', 'category_id');
     }
+
+    public function history()
+    {
+        return $this->hasOne(Category::class, 'task_id', 'id');
+    }
 }
