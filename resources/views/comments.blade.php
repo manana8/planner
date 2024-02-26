@@ -5,6 +5,7 @@
         <hr>
         <ul class="list">
         @foreach($taskComments as $taskComment)
+            <p><a href="{{ url('edit-comment', $taskComment->id) }}" class="edit">Edit</a></p>
             Data: {{ $taskComment->created_at }} <a href="{{ url('delete-comment', $taskComment->id) }}" class="delete">Delete</a>
             <p><u> Comment: {{$taskComment->comment}} </u></p>
             <hr>

@@ -30,22 +30,22 @@
         </form>
     </main>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script>
-        $("document").ready(function() {
-            $('.doneTask').submit(function() {
-                $.ajax({
-                    type: "POST",
-                    url: "/done-task/{{ $task->id }}",
-                    data: $(this).serialize(),
-                    success: function() {
-                        console.log('done');
-                        $('input.add__input').val('');
-                    }
-                })
-            });
-        });
-    </script>
+{{--    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>--}}
+{{--    <script>--}}
+{{--        $("document").ready(function() {--}}
+{{--            $('.doneTask').submit(function() {--}}
+{{--                $.ajax({--}}
+{{--                    type: "POST",--}}
+{{--                    url: "/done-task/{{ $task->id }}",--}}
+{{--                    data: $(this).serialize(),--}}
+{{--                    success: function() {--}}
+{{--                        console.log('done');--}}
+{{--                        $('input.add__input').val('');--}}
+{{--                    }--}}
+{{--                })--}}
+{{--            });--}}
+{{--        });--}}
+{{--    </script>--}}
 
     <style>
         * {

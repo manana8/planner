@@ -47,6 +47,9 @@ Route::post('/add-comment/{id}', [TaskController::class, 'addComment']);
 Route::get('/comments/{id}', [TaskController::class, 'getComments']);
 Route::get('/delete-comment/{id}', [TaskController::class, 'deleteComment']);
 
+Route::get('/edit-comment/{id}', [TaskController::class, 'editCommentForm']);
+Route::post('/edit-comment/{id}', [TaskController::class, 'editComment']);
+
 Route::get('/signout', [UserController::class, 'signOut']);
 //Auth::routes();
 //

@@ -149,12 +149,27 @@ class TaskController
         return view("comments", ['taskComments' => $taskComments]);
     }
 
+    public function editCommentForm(int $commentId)
+    {
+        $taskComment = TaskComment::where('id', '=', $commentId)->first();
+
+        return view("editingComment", ['taskComment' => $taskComment]);
+    }
+
+    public function editComment(Request $request, int $commentId)
+    {
+        $taskComment = TaskComment::where('id', '=', $commentId)->first();
+
+        $taskComment->update([
+            'comment' => $request['comment'],
+        ]);
+    }
+
     public function deleteComment(int $commentId)
     {
         $taskComment = TaskComment::where('id', '=', $commentId)->first();
-        $taskId = $taskComment->task_id;
         $taskComment->delete();
 
-        return redirect(url("comments/$taskId"));
+        return redirect(url("comments/$taskComment->task_id"));
     }
 }
