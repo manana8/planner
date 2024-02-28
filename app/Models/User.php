@@ -44,4 +44,14 @@ class User extends Authenticatable
     ];
 
     public $timestamps = false; // По умолчанию Eloquent ожидает, что столбцы «create_at» и «update_at» будут существовать в ваших >таблицах. Если вы не хотите, чтобы эти столбцы автоматически управлялись >Eloquent, установите для свойства $timestamps вашей модели значение false.
+
+    public function activeTasks()
+    {
+        return $relation = $this->hasMany(Task::class)->whereNull('data_of_done')->orderBy('deadline');
+    }
+
+    public function doneTasks()
+    {
+        return $this->hasMany(Task::class)->whereNotNull('data_of_done')->orderByDesc('data_of_done');
+    }
 }

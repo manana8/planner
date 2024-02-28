@@ -26,28 +26,28 @@ Route::post('/registrate', [UserController::class, 'postRegistrate']);
 Route::get('/login', [UserController::class, 'getLogin']);
 Route::post('/login', [UserController::class, 'postLogin']);
 
-Route::get('/main', [MainController::class, 'getMainPage']);
-Route::get('/active-tasks', [TaskController::class, 'getActiveTasks']);
-Route::get('/done-tasks', [TaskController::class, 'getDoneTasks']);
+Route::get('/main', [MainController::class, 'getMainPage'])->middleware('user.auth');
+Route::get('/active-tasks', [TaskController::class, 'getActiveTasks'])->middleware('user.auth');
+Route::get('/done-tasks', [TaskController::class, 'getDoneTasks'])->middleware('user.auth');
 
 Route::get('/add-task', function () {
     return view('addingTask');
-});
+})->middleware('user.auth');
 Route::post('/add-task', [TaskController::class, 'addTask']);
-Route::get('/delete-task/{id}', [TaskController::class, 'deleteTask']);
-Route::get('/done-task/{id}', [TaskController::class, 'doneTask']);
+Route::get('/delete-task/{id}', [TaskController::class, 'deleteTask'])->middleware('user.auth');
+Route::get('/done-task/{id}', [TaskController::class, 'doneTask'])->middleware('user.auth');
 
-Route::get('/edit-task/{id}', [TaskController::class, 'editTaskForm']);
+Route::get('/edit-task/{id}', [TaskController::class, 'editTaskForm'])->middleware('user.auth');
 Route::post('/edit-task/{id}', [TaskController::class, 'editTask']);
 
-Route::get('/history/{id}', [TaskController::class, 'getHistory']);
+Route::get('/history/{id}', [TaskController::class, 'getHistory'])->middleware('user.auth');
 
-Route::get('/add-comment/{id}', [TaskController::class, 'getAddCommentForm']);
+Route::get('/add-comment/{id}', [TaskController::class, 'getAddCommentForm'])->middleware('user.auth');
 Route::post('/add-comment/{id}', [TaskController::class, 'addComment']);
-Route::get('/comments/{id}', [TaskController::class, 'getComments']);
+Route::get('/comments/{id}', [TaskController::class, 'getComments'])->middleware('user.auth');
 Route::get('/delete-comment/{id}', [TaskController::class, 'deleteComment']);
 
-Route::get('/edit-comment/{id}', [TaskController::class, 'editCommentForm']);
+Route::get('/edit-comment/{id}', [TaskController::class, 'editCommentForm'])->middleware('user.auth');
 Route::post('/edit-comment/{id}', [TaskController::class, 'editComment']);
 
 Route::get('/signout', [UserController::class, 'signOut']);

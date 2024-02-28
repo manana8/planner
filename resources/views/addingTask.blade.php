@@ -31,11 +31,33 @@
                         <span class="add__circle"></span>
                     </label>
                 </div>
-                <input placeholder="+ Add title" type="text" name="title" class="add__input">
-                <input placeholder="+ Add task" type="text" name="text" class="add__input">
-                <input type="date" name="deadline" class="add__input">
-                <input placeholder="+ Add status" type="text" name="status" class="add__input">
-                <button type="submit" class="btn">Add</button>
+                <div>
+                    <input placeholder="+ Add title" type="text" name="title" class="add__input">
+                    @if ($errors->has('title'))
+                        <span class="text-danger">{{ $errors->first('title') }}</span>
+                    @endif
+                </div>
+                <div>
+                    <input placeholder="+ Add task" type="text" name="text" class="add__input">
+                    @if ($errors->has('text'))
+                        <span class="text-danger">{{ $errors->first('text') }}</span>
+                    @endif
+                </div>
+                <div>
+                    <input type="date" name="deadline" class="add__input">
+                    @if ($errors->has('deadline'))
+                        <span class="text-danger">{{ $errors->first('deadline') }}</span>
+                    @endif
+                </div>
+                <div>
+                    <input placeholder="+ Add status" type="text" name="status" class="add__input">
+                    @if ($errors->has('status'))
+                        <span class="text-danger">{{ $errors->first('status') }}</span>
+                    @endif
+                </div>
+                <div>
+                    <button type="submit" class="btn">Add</button>
+                </div>
             </div>
         </form>
 

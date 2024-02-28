@@ -31,4 +31,9 @@ class Task extends Model
     {
         return $this->hasOne(Category::class, 'task_id', 'id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

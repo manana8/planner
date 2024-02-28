@@ -2,46 +2,59 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddTaskRequest;
+use App\Http\Requests\EditTaskRequest;
 use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\TaskHistory;
+use App\Models\User;
+use App\Models\UserTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class TaskController
 {
     public function getActiveTasks()
     {
-        $userId = Auth::id();
-        $tasks = Task::with('category')->get()->where('user_id', $userId)->whereNull('data_of_done')->sortByDesc('deadline');
+        $user = Auth::user();
+        $tasks = $user->activeTasks;
 
         return view('main', ['tasks' => $tasks]);
     }
 
     public function getDoneTasks()
     {
-        $userId = Auth::id();
-        $tasks = Task::with('category')->get()->where('user_id', $userId)->whereNotNull('data_of_done')->sortByDesc('data_of_done');
+        $user = Auth::user();
+        $tasks = $user->doneTasks;
 
         return view('main', ['tasks' => $tasks]);
     }
 
-    public function addTask(Request $request)
+    public function addTask(AddTaskRequest $request)
     {
-        $request->validate([
-            'title' => 'required|max:250', // обязательный
-            'text' => 'required',
-            'category_id' => 'required',
-            'deadline' => 'required',
-            'status' => 'required',
-        ]);
-
+        $request->validated();
         $data = $request->all(); // всё, что ввели в форму
-        $task = $this->create($data);
 
-        $taskId = $task->id;
-        $this->createTaskHistory($data, $taskId);
+        DB::transaction(function() use ($data) {
+            $task = $this->create($data);
+            $this->createTaskHistory($data, $task->id);
+            $userTask = $this->createUsersTasks($task->id);
+            $userTask->update([
+                'role' => 'admin'
+            ]);
+        });
+
+    }
+
+    public function createUsersTasks(int $taskId)
+    {
+        return UserTask::create([
+            'user_id' => Auth::id(),
+            'task_id' => $taskId,
+            'role' => '',
+        ]);
     }
 
     public function createTaskHistory(array $data, int $taskId)
@@ -61,7 +74,7 @@ class TaskController
     public function create(array $data)
     {
         return Task::create([
-            'user_id' => Auth::id(),
+//            'user_id' => Auth::id(),
             'title' => $data['title'],
             'text' => $data['text'],
             'category_id' => $data['category_id'],
@@ -73,16 +86,19 @@ class TaskController
 
     public function doneTask(int $taskId)
     {
-        $task = Task::where('id', '=', $taskId)->first();
-        $task->update([
-            'data_of_done' => date('Y-m-d H:i:s')
-        ]);
+        DB::transaction(function() use ($taskId) {
+            $task = Task::where('id', '=', $taskId)->first();
 
-        TaskHistory::create([
-            'data_of_history_create' => date('Y-m-d H:i:s'),
-            'task_id' => $taskId,
-            'type' => 'Done',
-        ]);
+            $task->update([
+                'data_of_done' => date('Y-m-d H:i:s')
+            ]);
+
+            TaskHistory::create([
+                'data_of_history_create' => date('Y-m-d H:i:s'),
+                'task_id' => $taskId,
+                'type' => 'Done',
+            ]);
+        });
 
         return redirect(url("main"));
     }
@@ -94,24 +110,28 @@ class TaskController
         return view("editingTask", ['task' => $task]);
     }
 
-    public function editTask(Request $request, int $taskId)
+    public function editTask(EditTaskRequest $request, int $taskId)
     {
-        $task = Task::where('id', '=', $taskId)->first();
+        $request->validated();
 
-        $task->update([
-            'title' => $request['title'],
-            'text' => $request['text'],
-            'category_id' => $request['category_id'],
-            'deadline' => $request['deadline'],
-            'status' => $request['status'],
-        ]);
+        DB::transaction(function() use ($request, $taskId) {
+            $task = Task::where('id', '=', $taskId)->first();
 
-        $data = $request->all();
-        $history = $this->createTaskHistory($data, $taskId);
-        $historyId = $history->id;
-        TaskHistory::where('task_id', '=', $taskId)->where('id', '=', $historyId)->update([
-            'type' => 'CHANGE',
-        ]);
+            $task->update([
+                'title' => $request['title'],
+                'text' => $request['text'],
+                'category_id' => $request['category_id'],
+                'deadline' => $request['deadline'],
+                'status' => $request['status'],
+            ]);
+
+            $data = $request->all();
+            $history = $this->createTaskHistory($data, $taskId);
+            $history->update([
+                'type' => 'CHANGE',
+            ]);
+        });
+
     }
 
     public function deleteTask(int $taskId)

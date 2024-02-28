@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegistrateRequest;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -20,13 +22,9 @@ class UserController extends BaseController
         return view('registrate');
     }
 
-    public function postRegistrate(Request $request)
+    public function postRegistrate(RegistrateRequest $request)
     {
-        $request->validate([
-            'name' => 'required', // обязательный
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
-        ]);
+        $request->validated();
 
         $data = $request->all(); // всё, что ввели в форму
         $this->create($data);
@@ -47,18 +45,14 @@ class UserController extends BaseController
         return view('login');
     }
 
-    public function postLogin(Request $request)
+    public function postLogin(LoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required',
-            'password' => 'required',
-        ]);
+        $request->validated();
 
         $credentials = $request->only('email', 'password'); //возвращает элементы с указанными ключами
 
         if (Auth::attempt($credentials)) { // проверяет данные пользователя
             return redirect('main')->withSuccess('Signed in');
-//            echo 'done';
         }
 
         return redirect("login")->withSuccess('Login details are not valid');
