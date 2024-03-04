@@ -7,10 +7,12 @@
         @foreach($taskComments as $taskComment)
             <p><a href="{{ url('edit-comment', $taskComment->id) }}" class="edit">Edit</a></p>
             Data: {{ $taskComment->created_at }} <a href="{{ url('delete-comment', $taskComment->id) }}" class="delete">Delete</a>
-            <p><u> Comment: {{$taskComment->comment}} </u></p>
+                <p> From: {{$taskComment->user->email}} </p>
+                <p><u> Comment: {{$taskComment->comment}} </u></p>
             <hr>
         @endforeach
-            <a href="{{ url('main') }}"> BACK </a>
+            <input type="button" onclick="history.back();" value="BACK">
+            <p><a href="{{ url('main') }}"> MAIN </a>
         </ul>
     </main>
 

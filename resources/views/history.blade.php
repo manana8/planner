@@ -30,8 +30,7 @@
                     <hr>
              @endif
         @endfor
-
-            <a href="{{ url('main') }}"> BACK </a>
+            <input type="button" onclick="history.back();" value="BACK">
         </ul>
     </main>
 

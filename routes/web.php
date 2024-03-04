@@ -50,6 +50,12 @@ Route::get('/delete-comment/{id}', [TaskController::class, 'deleteComment']);
 Route::get('/edit-comment/{id}', [TaskController::class, 'editCommentForm'])->middleware('user.auth');
 Route::post('/edit-comment/{id}', [TaskController::class, 'editComment']);
 
+Route::get('/share/{id}', [TaskController::class, 'shareForm'])->middleware('user.auth');
+Route::post('/share/{id}', [TaskController::class, 'shareTask']);
+
+Route::get('/task-users/{id}', [TaskController::class, 'taskUsers'])->middleware('user.auth');
+
+
 Route::get('/signout', [UserController::class, 'signOut']);
 //Auth::routes();
 //

@@ -32,10 +32,10 @@
                 <input placeholder="+ Add task" type="text" name="text" class="edit__input" value="{{ $task->text }}">
                 <input name="deadline" class="edit__input" value="{{ $task->deadline }}">
                 <input placeholder="+ Add status" type="text" name="status" class="edit__input" value="{{ $task->status }}">
-                <button type="submit" class="btn">Edit</button>
+                <button type="submit" class="btn" style="color: green">Edit</button>
             </div>
         </form>
-        <a href="{{ url('main') }}"> BACK </a>
+        <input type="button" onclick="history.back();" value="BACK">
     </main>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>

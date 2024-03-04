@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -45,13 +46,23 @@ class User extends Authenticatable
 
     public $timestamps = false; // По умолчанию Eloquent ожидает, что столбцы «create_at» и «update_at» будут существовать в ваших >таблицах. Если вы не хотите, чтобы эти столбцы автоматически управлялись >Eloquent, установите для свойства $timestamps вашей модели значение false.
 
+    public function tasks(): BelongsToMany
+    {
+        return $this->belongsToMany(Task::class, 'task_users', 'user_id', 'task_id')->withPivot('role');
+    }
+
     public function activeTasks()
     {
-        return $relation = $this->hasMany(Task::class)->whereNull('data_of_done')->orderBy('deadline');
+        return $this->hasMany(Task::class)->whereNull('data_of_done')->orderBy('deadline');
     }
 
     public function doneTasks()
     {
         return $this->hasMany(Task::class)->whereNotNull('data_of_done')->orderByDesc('data_of_done');
+    }
+
+    public function comment()
+    {
+        return $this->hasOne(TaskComment::class, 'user_id', 'id');
     }
 }

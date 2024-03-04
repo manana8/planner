@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Task extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+//        'user_id',
         'title',
         'text',
         'category_id',
@@ -32,8 +33,8 @@ class Task extends Model
         return $this->hasOne(Category::class, 'task_id', 'id');
     }
 
-    public function user()
+    public function users(): BelongsToMany
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class, 'task_users', 'task_id', 'user_id')->withPivot('role');
     }
 }

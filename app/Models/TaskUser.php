@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserTask extends Model
+class TaskUser extends Model
 {
     use HasFactory;
 
@@ -14,4 +14,6 @@ class UserTask extends Model
         'task_id',
         'role',
     ];
+
+    public $timestamps = false;
 }

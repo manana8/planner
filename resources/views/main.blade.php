@@ -14,6 +14,7 @@
                     <a href="{{ url('history', $task->id) }}" class="delete">View the history</a>
                     <p><a href="{{ url('add-comment', $task->id) }}" >Add comments</a>
                     <a href="{{ url('comments', $task->id) }}" >View the comments</a>
+                    <p><a href="{{ url('task-users', $task->id) }}" >Users</a>
                     <li class="item">
 {{--                    <form method="POST" class="doneTask" onsubmit="return false">--}}
 {{--                        @csrf--}}
@@ -26,12 +27,14 @@
                         {{ $task->title }} <a href="{{ url('delete-task', $task->id) }}" class="delete">Delete</a> </li>
                         <div style="color: #4a5568"><p> Deadline: {{ $task->deadline }} </p></div>
                         <div style="color: teal"><p> Category: {{ $task->category->category }} </p></div>
-                        <div class="content" style="color: darkgrey"><p> {{ $task->text }} </p></div>
+                        <div class="content" style="color: darkgrey"><p> {{ $task->text }} </div>
                         @if($task->data_of_done)
                             <div class="status" style="color: green"><p> Data of done: {{ $task->data_of_done}} </p></div>
                         @else
                             <div class="status" style="color: red">Status: IN PROGRESS</div>
                         @endif
+                    <a href="{{ url('share', $task->id) }}" >Share</a>
+                    <hr>
                 @endforeach
             </ul>
 

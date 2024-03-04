@@ -14,6 +14,8 @@
                 <input placeholder="Add comment" type="text" name="comment" class="add__input">
                 <button type="submit" class="btn">Add</button>
             </div>
+            <a href="{{ url('comments', $taskId) }}"> COMMENTS </a><p>
+            <input type="button" onclick="history.back();" value="BACK">
         </form>
     </main>
 

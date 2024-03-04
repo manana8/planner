@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddTaskRequest;
 use App\Http\Requests\EditTaskRequest;
+use App\Http\Requests\ShareRequest;
 use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\TaskHistory;
 use App\Models\User;
-use App\Models\UserTask;
+use App\Models\TaskUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 
 class TaskController
 {
@@ -35,12 +35,13 @@ class TaskController
     public function addTask(AddTaskRequest $request)
     {
         $request->validated();
+        $userId = Auth::id();
         $data = $request->all(); // всё, что ввели в форму
 
-        DB::transaction(function() use ($data) {
+        DB::transaction(function() use ($data, $userId) {
             $task = $this->create($data);
             $this->createTaskHistory($data, $task->id);
-            $userTask = $this->createUsersTasks($task->id);
+            $userTask = $this->createTasksUsers($userId, $task->id);
             $userTask->update([
                 'role' => 'admin'
             ]);
@@ -48,10 +49,10 @@ class TaskController
 
     }
 
-    public function createUsersTasks(int $taskId)
+    public function createTasksUsers(int $userId, int $taskId)
     {
-        return UserTask::create([
-            'user_id' => Auth::id(),
+        return TaskUser::create([
+            'user_id' => $userId,
             'task_id' => $taskId,
             'role' => '',
         ]);
@@ -74,7 +75,6 @@ class TaskController
     public function create(array $data)
     {
         return Task::create([
-//            'user_id' => Auth::id(),
             'title' => $data['title'],
             'text' => $data['text'],
             'category_id' => $data['category_id'],
@@ -131,7 +131,6 @@ class TaskController
                 'type' => 'CHANGE',
             ]);
         });
-
     }
 
     public function deleteTask(int $taskId)
@@ -191,5 +190,34 @@ class TaskController
         $taskComment->delete();
 
         return redirect(url("comments/$taskComment->task_id"));
+    }
+
+    public function shareForm(int $taskId)
+    {
+        $task = Task::where('id', '=', $taskId)->first();
+
+        return view("share", ['task' => $task]);
+    }
+
+    public function shareTask(ShareRequest $request, int $taskId)
+    {
+        $request->validated();
+        $data = $request->only('email');
+
+        DB::transaction(function() use ($data, $taskId) {
+            $user = User::where('email', '=', $data['email'])->first();
+            $userTask = $this->createTasksUsers($user['id'], $taskId);
+            $userTask->update([
+                'role' => 'performer'
+            ]);
+        });
+    }
+
+    public function taskUsers(int $taskId)
+    {
+        $task = Task::where('id', '=', $taskId)->first();
+        $users = $task->users;
+
+        return view("taskUsers", ['users' => $users, 'taskId' => $taskId]);
     }
 }

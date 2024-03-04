@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id')->unsigned();
+//            $table->integer('user_id')->unsigned();
             $table->string('title');
             $table->string('text');
             $table->integer('category_id');
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('status');
             $table->dateTime('data_of_create');
             $table->dateTime('data_of_done')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+//            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('category_id')->references('id')->on('categories');
         });
     }
@@ -32,6 +32,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('task_histories');
+        Schema::dropIfExists('task_user');
         Schema::dropIfExists('tasks');
     }
 };

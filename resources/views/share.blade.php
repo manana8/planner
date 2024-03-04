@@ -1,30 +1,34 @@
 @extends('layouts')
 @section('content')
     <main class="app">
-        The editing comment
         <nav class="nav">
             <a href="{{ url('main') }}" class="nav__item active">All</a>
             <a href="{{ url('active-tasks') }}" class="nav__item active">Active</a>
             <a href="{{ url('done-tasks') }}" class="nav__item active">Complete</a>
         </nav>
-        <form method="POST" class="addCommentForm" onsubmit="return false">
+        You can share your task :)<p>
+        <form method="POST" class="shareForm">
             @csrf
             <div class="add">
-                <input type="text" placeholder="task_id" name="task_id" hidden="" value="{{ $taskComment->task_id }}">
-                <input placeholder="Add comment" type="text" name="comment" class="add__input" value="{{ $taskComment->comment }}">
-                <button type="submit" class="btn" style="color: green">Edit</button>
-                <p></p><a href="{{ url('comments', $taskComment->task_id ) }}"> BACK </a>
+                <input type="text" placeholder="task_id" name="task_id" hidden="" value="{{ $task->id }}">
+                <input placeholder="Input email your coworker" type="text" name="email" class="add__input">
+                @if ($errors->has('email'))
+                    <span class="text-danger">{{ 'Пользователя с таким эмайл не существует' }}</span>
+                @endif
+                <button type="submit" class="btn">Share</button>
             </div>
         </form>
+        <a href="{{ url('task-users', $task->id) }}">Look the users</a>
+        <input type="button" onclick="history.back();" value="BACK">
     </main>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script>
         $("document").ready(function() {
-            $('.addCommentForm').submit(function() {
+            $('.shareForm').submit(function() {
                 $.ajax({
                     type: "POST",
-                    url: "/edit-comment/{{ $taskComment->id }}",
+                    url: "/share/{{ $task->id }}",
                     data: $(this).serialize(),
                     success: function() {
                         console.log('done');
@@ -136,6 +140,12 @@
         }
         .item__checkbox input:checked + .fa-check {
             transform: scale(1);
+        }
+        .btn {
+            /*border-radius: 50%;*/
+            width: auto;
+            height: auto;
+            background: #9ca3af;
         }
     </style>
 @endsection

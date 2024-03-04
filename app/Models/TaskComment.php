@@ -15,5 +15,9 @@ class TaskComment extends Model
         'comment',
     ];
 
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 //    public $timestamps = false;
 }
