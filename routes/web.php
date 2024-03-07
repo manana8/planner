@@ -55,6 +55,8 @@ Route::post('/share/{id}', [TaskController::class, 'shareTask']);
 
 Route::get('/task-users/{id}', [TaskController::class, 'taskUsers'])->middleware('user.auth');
 
+Route::get('/accept-task/{id}',[TaskController::class, 'acceptTask']);
+Route::get('/decline-task/{id}',[TaskController::class, 'declineTask']);
 
 Route::get('/signout', [UserController::class, 'signOut']);
 //Auth::routes();

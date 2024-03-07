@@ -7,7 +7,7 @@
             <a href="{{ url('done-tasks') }}" class="nav__item active">Complete</a>
         </nav>
         You can share your task :)<p>
-        <form method="POST" class="shareForm">
+        <form method="POST" class="shareForm" onsubmit="return false">
             @csrf
             <div class="add">
                 <input type="text" placeholder="task_id" name="task_id" hidden="" value="{{ $task->id }}">
@@ -18,6 +18,7 @@
                 <button type="submit" class="btn">Share</button>
             </div>
         </form>
+{{--        <a href="{{ url('sendbasicemail') }}">SEND TEH EMAIL</a>--}}
         <a href="{{ url('task-users', $task->id) }}">Look the users</a>
         <input type="button" onclick="history.back();" value="BACK">
     </main>

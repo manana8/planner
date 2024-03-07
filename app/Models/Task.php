@@ -30,7 +30,7 @@ class Task extends Model
 
     public function history()
     {
-        return $this->hasOne(Category::class, 'task_id', 'id');
+        return $this->hasOne(TaskHistory::class, 'id', 'task_id');
     }
 
     public function users(): BelongsToMany

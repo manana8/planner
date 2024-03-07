@@ -27,7 +27,7 @@ class TaskHistory extends Model
 
     public function task()
     {
-        return $this->hasOne(Category::class, 'task_id', 'id');
+        return $this->hasOne(Task::class, 'task_id', 'id');
     }
 
     public $timestamps = false;

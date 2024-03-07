@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AddTaskRequest;
 use App\Http\Requests\EditTaskRequest;
 use App\Http\Requests\ShareRequest;
+use App\Models\Invitation;
 use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\TaskHistory;
@@ -13,12 +14,14 @@ use App\Models\TaskUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class TaskController
 {
     public function getActiveTasks()
     {
         $user = Auth::user();
+//        $tasks = $user->tasks->whereNull('data_of_done')->sortBy('deadline');
         $tasks = $user->activeTasks;
 
         return view('main', ['tasks' => $tasks]);
@@ -203,14 +206,22 @@ class TaskController
     {
         $request->validated();
         $data = $request->only('email');
+        $userFrom = Auth::user();
+        $user = User::where('email', '=', $data['email'])->first();
 
-        DB::transaction(function() use ($data, $taskId) {
-            $user = User::where('email', '=', $data['email'])->first();
-            $userTask = $this->createTasksUsers($user['id'], $taskId);
-            $userTask->update([
-                'role' => 'performer'
-            ]);
-        });
+        if (!isset($user)) {
+            return 'There is no user w this email or other error idk :(';
+        }
+
+        $invitation = Invitation::create([
+            'user_id_from' => Auth::id(),
+            'user_id_to' => $user['id'],
+            'task_id' => $taskId,
+            'status' => 'invitation SENT',
+        ]);
+
+        $data = ['user'=>$user, 'userFrom' => $userFrom, 'task'=>$invitation, 'text'=>'You have been invited to work on this task. If you want to accept this invitation, press YES, otherwise, press NO!', 'subject'=>'Invitation to perform a task'];
+        $this->sendEmail($data, $user, $userFrom);
     }
 
     public function taskUsers(int $taskId)
@@ -219,5 +230,37 @@ class TaskController
         $users = $task->users;
 
         return view("taskUsers", ['users' => $users, 'taskId' => $taskId]);
+    }
+
+    public function sendEmail(array $data, User $userTo, User $userFrom) {
+        Mail::send(['text'=>'mail'], $data, function($message) use ($userTo, $userFrom, $data) {
+            $message->to($userTo->email, $userTo->name)->subject($data['subject']);
+            $message->from($userFrom->email, $userFrom->name);
+        });
+    }
+
+    public function acceptTask(int $invitationId)
+    {
+        $invitation = Invitation::where('id', '=', $invitationId)->first();
+
+        DB::transaction(function() use ($invitation) {
+            $userTask = $this->createTasksUsers($invitation->user_id_to, $invitation->task_id);
+            $userTask->update([
+                'role' => 'performer'
+            ]);
+
+            $invitation->update([
+                'status' => 'invitation ACCEPTED'
+            ]);
+        });
+    }
+
+    public function declineTask(int $invitationId)
+    {
+        $invitation = Invitation::where('id', '=', $invitationId)->first();
+
+        $invitation->update([
+            'status' => 'invitation DECLINED'
+        ]);
     }
 }

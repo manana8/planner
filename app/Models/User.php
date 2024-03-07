@@ -53,12 +53,12 @@ class User extends Authenticatable
 
     public function activeTasks()
     {
-        return $this->hasMany(Task::class)->whereNull('data_of_done')->orderBy('deadline');
+        return $this->tasks()->whereNull('data_of_done')->orderBy('deadline');
     }
 
     public function doneTasks()
     {
-        return $this->hasMany(Task::class)->whereNotNull('data_of_done')->orderByDesc('data_of_done');
+        return $this->tasks()->whereNotNull('data_of_done')->orderByDesc('data_of_done');
     }
 
     public function comment()

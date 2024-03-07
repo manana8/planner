@@ -32,7 +32,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('task_histories');
-        Schema::dropIfExists('task_user');
+        Schema::dropIfExists('task_users');
         Schema::dropIfExists('tasks');
     }
 };

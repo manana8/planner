@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_users', function (Blueprint $table) {
+        Schema::create('invitations', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
+            $table->integer('user_id_from');
+            $table->integer('user_id_to');
             $table->integer('task_id');
-            $table->string('role');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('status');
+            $table->timestamps();
+            $table->foreign('user_id_from')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id_to')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
         });
     }
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_users');
+        Schema::dropIfExists('invitations');
     }
 };
