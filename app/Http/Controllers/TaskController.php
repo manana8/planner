@@ -217,7 +217,7 @@ class TaskController
             'user_id_from' => Auth::id(),
             'user_id_to' => $user['id'],
             'task_id' => $taskId,
-            'status' => 'invitation SENT',
+            'status' => 'sent',
         ]);
 
         $data = ['user'=>$user, 'userFrom' => $userFrom, 'task'=>$invitation, 'text'=>'You have been invited to work on this task. If you want to accept this invitation, press YES, otherwise, press NO!', 'subject'=>'Invitation to perform a task'];
@@ -250,7 +250,7 @@ class TaskController
             ]);
 
             $invitation->update([
-                'status' => 'invitation ACCEPTED'
+                'status' => 'accepted'
             ]);
         });
     }
@@ -260,7 +260,7 @@ class TaskController
         $invitation = Invitation::where('id', '=', $invitationId)->first();
 
         $invitation->update([
-            'status' => 'invitation DECLINED'
+            'status' => 'declined'
         ]);
     }
 }
