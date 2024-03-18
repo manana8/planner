@@ -11,10 +11,14 @@ use App\Models\TaskComment;
 use App\Models\TaskHistory;
 use App\Models\User;
 use App\Models\TaskUser;
+use App\Service\PublishService;
+use App\Service\RabbitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class TaskController
 {
@@ -206,7 +210,6 @@ class TaskController
     {
         $request->validated();
         $data = $request->only('email');
-        $userFrom = Auth::user();
         $user = User::where('email', '=', $data['email'])->first();
 
         if (!isset($user)) {
@@ -220,8 +223,8 @@ class TaskController
             'status' => 'sent',
         ]);
 
-        $data = ['user'=>$user, 'userFrom' => $userFrom, 'task'=>$invitation, 'text'=>'You have been invited to work on this task. If you want to accept this invitation, press YES, otherwise, press NO!', 'subject'=>'Invitation to perform a task'];
-        $this->sendEmail($data, $user, $userFrom);
+        $publishService = new RabbitService();
+        $publishService->publish($invitation->id);
     }
 
     public function taskUsers(int $taskId)
@@ -232,12 +235,16 @@ class TaskController
         return view("taskUsers", ['users' => $users, 'taskId' => $taskId]);
     }
 
-    public function sendEmail(array $data, User $userTo, User $userFrom) {
-        Mail::send(['text'=>'mail'], $data, function($message) use ($userTo, $userFrom, $data) {
-            $message->to($userTo->email, $userTo->name)->subject($data['subject']);
-            $message->from($userFrom->email, $userFrom->name);
-        });
-    }
+//    public function sendMail(int $id) {
+//        $connection = new AMQPStreamConnection('rabbitmq', 5672, 'user', 'user');
+//        $channel = $connection->channel();
+//
+//        $msg = new AMQPMessage($id);
+//        $channel->basic_publish($msg, '', 'hello');
+//
+//        $channel->close();
+//        $connection->close();
+//    }
 
     public function acceptTask(int $invitationId)
     {

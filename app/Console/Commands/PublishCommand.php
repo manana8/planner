@@ -27,17 +27,18 @@ class PublishCommand extends Command
      */
     public function handle()
     {
-        $connection = new AMQPStreamConnection('rabbitmq', 5672, 'user', 'user');
-        $channel = $connection->channel();
-
-        $channel->queue_declare('hello', false, true, false, false);
-
-        $msg = new AMQPMessage('Hello World!');
-        $channel->basic_publish($msg, '', 'hello');
-
-        echo " [x] Sent 'Hello World!'\n";
-
-        $channel->close();
-        $connection->close();
+//        $connection = new AMQPStreamConnection('rabbitmq', 5672, 'user', 'user');
+//        $channel = $connection->channel();
+//
+//        $channel->queue_declare('hello', false, true, false, false);
+//
+//        $data = ['text'=>'You have been invited to work on this task. If you want to accept this invitation, press YES, otherwise, press NO!', 'subject'=>'Invitation to perform a task'];
+//        $msg = new AMQPMessage(json_encode($data));
+//        $channel->basic_publish($msg, '', 'hello');
+//
+//        echo " [x] Sent 'Hello World!'\n";
+//
+//        $channel->close();
+//        $connection->close();
     }
 }
